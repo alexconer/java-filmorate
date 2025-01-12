@@ -60,7 +60,7 @@ public class UserController {
         if (user.getName() != null) {
             oldUser.setName(user.getName());
         }
-        if (oldUser.getLogin() != null){
+        if (oldUser.getLogin() != null) {
             oldUser.setLogin(user.getLogin());
         }
         if (user.getBirthday() != null) {
