@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import java.time.LocalDate;
 
-public class MinimumDateValidator implements ConstraintValidator<MinimumDate, LocalDate>{
+public class MinimumDateValidator implements ConstraintValidator<MinimumDate, LocalDate> {
 
     private LocalDate minDate;
 
