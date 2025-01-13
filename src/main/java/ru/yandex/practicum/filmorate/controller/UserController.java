@@ -26,7 +26,7 @@ public class UserController {
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        log.info("Запрос добавления пользователя " + user);
+        log.info("Запрос добавления пользователя {}", user);
 
         if (!checkUserByEmail(user.getEmail())) {
             throw new ValidationException("Пользователь с таким email уже существует");
@@ -43,12 +43,12 @@ public class UserController {
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        log.info("Запрос обновления пользователя " + user);
+        log.info("Запрос обновления пользователя {}", user);
         if (user.getId() == null) {
             throw new ValidationException("Не указан id пользователя");
         }
         if (!users.containsKey(user.getId())) {
-            throw new NotFoundException("Пользователь id = " + user.getId() + "не найден");
+            throw new NotFoundException("Пользователь id = " + user.getId() + " не найден");
         }
         User oldUser = users.get(user.getId());
         if (user.getEmail() != null && !user.getEmail().equals(oldUser.getEmail())) {

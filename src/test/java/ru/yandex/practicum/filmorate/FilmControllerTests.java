@@ -115,7 +115,7 @@ class FilmControllerTests {
 				put("/films")
 						.contentType("application/json")
 						.content(objectMapper.writeValueAsString(newFilm))
-		).andExpect(status().isInternalServerError());
+		).andExpect(status().isBadRequest());
 
 		// фильм с несуществующим id
 		newFilm = new Film(2L, "film", "desc", LocalDate.of(2000, 12, 28), 120);
@@ -123,7 +123,7 @@ class FilmControllerTests {
 				put("/films")
 						.contentType("application/json")
 						.content(objectMapper.writeValueAsString(newFilm))
-		).andExpect(status().isInternalServerError());
+		).andExpect(status().isNotFound());
 
 		// корректной обновление
 		newFilm = new Film(1L, "film_upd", "desc_upd", LocalDate.of(2001, 12, 28), 100);

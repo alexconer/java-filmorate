@@ -85,7 +85,7 @@ public class UserControllerTests {
                 post("/users")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(user))
-        ).andExpect(status().isInternalServerError());
+        ).andExpect(status().isBadRequest());
 
         // корректный пользователь c пустым именем
         user = new User(7L, "baz@yandex.ru", "foo", null, LocalDate.of(2000, 1, 1));
@@ -120,7 +120,7 @@ public class UserControllerTests {
                 put("/users")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(newUser))
-        ).andExpect(status().isInternalServerError());
+        ).andExpect(status().isBadRequest());
 
         // Пользователь с несуществующим id
         newUser = new User(2L, "foo@yandex.ru", "foo", "bar", LocalDate.of(2000, 1, 1));
@@ -128,7 +128,7 @@ public class UserControllerTests {
                 put("/users")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(newUser))
-        ).andExpect(status().isInternalServerError());
+        ).andExpect(status().isNotFound());
 
         // Корректное обновление
         newUser = new User(1L, "foo@yandex.ru", "foo2", "bar2", LocalDate.of(2001, 1, 1));

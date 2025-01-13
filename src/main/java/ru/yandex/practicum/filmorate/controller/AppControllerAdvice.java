@@ -3,10 +3,13 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +21,7 @@ import java.util.stream.Collectors;
 public class AppControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    public Map<String, String> handleValidationException(MethodArgumentNotValidException ex) {
+    public Map<String, String> handleBaseValidationException(MethodArgumentNotValidException ex) {
         Map<String, String> errResponse = new HashMap<>();
 
         List<String> errors = ex.getBindingResult().getAllErrors().stream()
@@ -32,8 +35,8 @@ public class AppControllerAdvice {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler({RuntimeException.class})
-    public Map<String, String> handleAppException(RuntimeException ex) {
+    @ExceptionHandler({Throwable.class})
+    public Map<String, String> handleAppException(Throwable ex) {
         Map<String, String> errResponse = new HashMap<>();
 
         log.error("Ошибка выполнения: {} ", ex.getMessage());
@@ -41,4 +44,22 @@ public class AppControllerAdvice {
         errResponse.put("error", ex.getMessage());
         return errResponse;
     }
+
+    @ExceptionHandler({RuntimeException.class})
+    public ResponseEntity<Object> handleValidationException(RuntimeException ex) {
+        Map<String, String> errResponse = new HashMap<>();
+
+        log.error("Ошибка доступа: {} ", ex.getMessage());
+
+        errResponse.put("error", ex.getMessage());
+
+        HttpStatus httpStatus = switch (ex.getClass().getSimpleName()) {
+            case "NotFoundException" -> HttpStatus.NOT_FOUND;
+            case "ValidationException" -> HttpStatus.BAD_REQUEST;
+            default -> HttpStatus.INTERNAL_SERVER_ERROR;
+        };
+
+        return new ResponseEntity<>(errResponse, httpStatus);
+    }
+
 }

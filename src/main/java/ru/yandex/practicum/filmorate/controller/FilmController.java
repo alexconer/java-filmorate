@@ -25,7 +25,7 @@ public class FilmController {
 
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film) {
-        log.info("Запрос добавления фильма " + film);
+        log.info("Запрос добавления фильма {}", film);
         film.setId(CollectionHelper.getNextId(films));
         films.put(film.getId(), film);
         return film;
@@ -33,12 +33,12 @@ public class FilmController {
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        log.info("Запрос обновления фильма " + film);
+        log.info("Запрос обновления фильма {}", film);
         if (film.getId() == null) {
             throw new ValidationException("Не указан id фильма");
         }
         if (!films.containsKey(film.getId())) {
-            throw new NotFoundException("Фильм id = " + film.getId() + "не найден");
+            throw new NotFoundException("Фильм id = " + film.getId() + " не найден");
         }
         Film oldFilm = films.get(film.getId());
         if (film.getName() != null) {
