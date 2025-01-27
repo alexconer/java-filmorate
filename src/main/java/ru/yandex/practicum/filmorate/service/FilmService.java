@@ -22,6 +22,7 @@ public class FilmService {
         log.info("Запрос списка фильмов");
         return filmStorage.getAll();
     }
+
     public Film createFilm(Film film) {
         log.info("Запрос добавления фильма {}", film);
         return filmStorage.create(film);
