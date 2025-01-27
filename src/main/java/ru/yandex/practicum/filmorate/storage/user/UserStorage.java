@@ -23,4 +23,24 @@ public interface UserStorage {
      * Возвращает пользователя по его id
      */
     public User get(long id);
+
+    /**
+     * Добавляет друзей
+     */
+    public void addFriend(long id, long friendId);
+
+    /**
+     * Удаляет друзей
+     */
+    public void removeFriend(long id, long friendId);
+
+    /**
+     * Возвращает друзей пользователя
+     */
+    public Collection<User> getFriends(long id);
+
+    /**
+     * Возвращает список общих пользователей
+     */
+    public Collection<User> getCommonFriends(long id, long otherId);
 }

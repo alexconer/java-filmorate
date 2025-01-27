@@ -22,6 +22,16 @@ public class UserService {
         return userStorage.getAll();
     }
 
+    public User getUser(Long id) {
+        log.info("Запрос пользователя с id {}", id);
+
+        if (userStorage.get(id) == null) {
+            throw new NotFoundException("Пользователь с id " + id + " не найден");
+        }
+
+        return userStorage.get(id);
+    }
+
     public User createUser(User user) {
         log.info("Запрос добавления пользователя {}", user);
 
@@ -63,6 +73,55 @@ public class UserService {
             oldUser.setBirthday(user.getBirthday());
         }
         return userStorage.update(user.getId(), oldUser);
+    }
+
+    public void addFriend(Long userId, Long friendId) {
+        log.info("Запрос добавления друга {} для пользователя {}", friendId, userId);
+
+        if (userStorage.get(userId) == null) {
+            throw new NotFoundException("Пользователь id = " + userId + " не найден");
+        }
+        if (userStorage.get(friendId) == null) {
+            throw new NotFoundException("Пользователь id = " + friendId + " не найден");
+        }
+
+        userStorage.addFriend(userId, friendId);
+    }
+
+    public void removeFriend(Long userId, Long friendId) {
+        log.info("Запрос удаления друга {} для пользователя {}", friendId, userId);
+
+        if (userStorage.get(userId) == null) {
+            throw new NotFoundException("Пользователь id = " + userId + " не найден");
+        }
+        if (userStorage.get(friendId) == null) {
+            throw new NotFoundException("Пользователь id = " + friendId + " не найден");
+        }
+
+        userStorage.removeFriend(userId, friendId);
+    }
+
+    public Collection<User> getFriends(Long userId) {
+        log.info("Запрос списка друзей пользователя {}", userId);
+
+        if (userStorage.get(userId) == null) {
+            throw new NotFoundException("Пользователь id = " + userId + " не найден");
+        }
+
+        return userStorage.getFriends(userId);
+    }
+
+    public Collection<User> getCommonFriends(Long userId, Long otherUserId) {
+        log.info("Запрос списка общих друзей для пользователей {} и {}", userId, otherUserId);
+
+        if (userStorage.get(userId) == null) {
+            throw new NotFoundException("Пользователь id = " + userId + " не найден");
+        }
+        if (userStorage.get(otherUserId) == null) {
+            throw new NotFoundException("Пользователь id = " + otherUserId + " не найден");
+        }
+
+        return userStorage.getCommonFriends(userId, otherUserId);
     }
 
     private boolean checkUserByEmail(String email) {
