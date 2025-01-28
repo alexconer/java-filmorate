@@ -8,7 +8,8 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.Collection;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -63,7 +64,7 @@ public class UserService {
             }
             oldUser.setEmail(user.getEmail());
         }
-        if (user.getName() != null) {
+        if (user.getName() != null && !user.getName().isBlank()) {
             oldUser.setName(user.getName());
         }
         if (oldUser.getLogin() != null) {
@@ -121,7 +122,18 @@ public class UserService {
             throw new NotFoundException("Пользователь id = " + otherUserId + " не найден");
         }
 
-        return userStorage.getCommonFriends(userId, otherUserId);
+        Set<Long> friends = userStorage.getFriends(userId).stream().map(User::getId).collect(Collectors.toSet());
+        if (friends.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        Set<Long> allOtherFriends = userStorage.getFriends(otherUserId).stream().map(User::getId).collect(Collectors.toSet());
+        if (allOtherFriends.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return friends.stream()
+                .filter(allOtherFriends::contains).map(userStorage::get).toList();
     }
 
     private boolean checkUserByEmail(String email) {

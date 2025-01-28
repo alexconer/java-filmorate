@@ -49,11 +49,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> getPopularFilms(int count) {
-        return likes.keySet().stream()
-                .sorted(Comparator.comparing(id -> likes.get(id).size()).reversed())
-                .limit(count)
-                .map(films::get)
-                .toList();
+    public Set<Long> getLikes(long id) {
+        return likes.getOrDefault(id, Collections.emptySet());
     }
 }

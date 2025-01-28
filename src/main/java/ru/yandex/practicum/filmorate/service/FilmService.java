@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
+import java.util.Comparator;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -87,11 +88,17 @@ public class FilmService {
     }
 
     public Collection<Film> getPopularFilms(Integer count) {
-        log.info("Запрос популярных фильмов");
-        if (count == null || count < 0) {
-            count = 10;
-        }
-        return filmStorage.getPopularFilms(count);
+        log.info("Запрос популярных фильмов count = {}", count);
+
+        final Comparator<Film> comparatorByLike = (f1, f2) -> {
+            return filmStorage.getLikes(f1.getId()).size() - filmStorage.getLikes(f2.getId()).size();
+        };
+
+        return filmStorage.getAll().stream()
+                .filter(film -> filmStorage.getLikes(film.getId()).size() > 0)
+                .sorted(comparatorByLike.reversed())
+                .limit(count)
+                .toList();
     }
 
 }
