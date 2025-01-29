@@ -1,76 +1,56 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.helper.CollectionHelper;
 import ru.yandex.practicum.filmorate.model.User;
-
+import ru.yandex.practicum.filmorate.service.UserService;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
-@Slf4j
 public class UserController {
-    private final Map<Long, User> users = new HashMap<>();
+
+    private final UserService userService;
 
     @GetMapping
     public Collection<User> getUsers() {
-        log.info("Запрос списка пользователей");
-        return users.values();
+        return userService.getUsers();
     }
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        log.info("Запрос добавления пользователя {}", user);
-
-        if (!checkUserByEmail(user.getEmail())) {
-            throw new ValidationException("Пользователь с таким email уже существует");
-        }
-
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-
-        user.setId(CollectionHelper.getNextId(users));
-        users.put(user.getId(), user);
-        return user;
+        return userService.createUser(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        log.info("Запрос обновления пользователя {}", user);
-        if (user.getId() == null) {
-            throw new ValidationException("Не указан id пользователя");
-        }
-        if (!users.containsKey(user.getId())) {
-            throw new NotFoundException("Пользователь id = " + user.getId() + " не найден");
-        }
-        User oldUser = users.get(user.getId());
-        if (user.getEmail() != null && !user.getEmail().equals(oldUser.getEmail())) {
-            if (!checkUserByEmail(user.getEmail())) {
-                throw new ValidationException("Пользователь с таким email уже существует");
-            }
-            oldUser.setEmail(user.getEmail());
-        }
-        if (user.getName() != null) {
-            oldUser.setName(user.getName());
-        }
-        if (oldUser.getLogin() != null) {
-            oldUser.setLogin(user.getLogin());
-        }
-        if (user.getBirthday() != null) {
-            oldUser.setBirthday(user.getBirthday());
-        }
-        users.put(user.getId(), oldUser);
-        return oldUser;
+        return userService.updateUser(user);
     }
 
-    private boolean checkUserByEmail(String email) {
-        return !users.values().stream().anyMatch(u -> u.getEmail().equals(email));
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Long id) {
+        return userService.getUser(id);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void removeFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        userService.removeFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public Collection<User> getFriends(@PathVariable Long id) {
+        return userService.getFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{friendId}")
+    public Collection<User> getCommonFriends(@PathVariable Long id, @PathVariable Long friendId) {
+        return userService.getCommonFriends(id, friendId);
     }
 }
