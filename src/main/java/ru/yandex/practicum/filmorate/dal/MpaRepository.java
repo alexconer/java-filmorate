@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public class MpaRepository extends BaseRepository<Mpa> {
 
-    private final static String FIND_ALL_QUERY = """
+    private static final String FIND_ALL_QUERY = """
             SELECT mpa.* from mpa_rating mpa
     """;
 

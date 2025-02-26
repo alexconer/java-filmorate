@@ -13,30 +13,30 @@ import java.util.Optional;
 @Repository
 public class UserRepository extends BaseRepository<User>  {
 
-    private final static String FIND_ALL_QUERY = """
+    private static final String FIND_ALL_QUERY = """
             SELECT u.* from users u
     """;
-    private final static String INSERT_USER_QUERY = """
+    private static final String INSERT_USER_QUERY = """
         INSERT INTO users (name, login, email, birthday, last_update) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
     """;
-    private final static String MERGE_USER_QUERY = """
+    private static final String MERGE_USER_QUERY = """
         MERGE INTO users (id, name, login, email, birthday, last_update) KEY(id) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
     """;
-    private final static String ADD_FRIENDS_QUERY = """
+    private static final String ADD_FRIENDS_QUERY = """
         MERGE INTO user_friendship (user_id, friend_id, confirmed, last_update) KEY(user_id, friend_id)
         VALUES (?, ?, (SELECT count(*) FROM USER_FRIENDSHIP WHERE USER_ID = ? AND FRIEND_ID = ?) > 0, CURRENT_TIMESTAMP)
     """;
-    private final static String CONFIRM_FRIENDS_QUERY = """
+    private static final String CONFIRM_FRIENDS_QUERY = """
         UPDATE user_friendship SET confirmed = true WHERE user_id = ? AND friend_id = ?
     """;
-    private final static String DELETE_FRIENDS_QUERY = """
+    private static final String DELETE_FRIENDS_QUERY = """
         DELETE FROM user_friendship WHERE user_id = ? AND friend_id = ?
     """;
-    private final static String FIND_FRIENDS_QUERY = """
+    private static final String FIND_FRIENDS_QUERY = """
         JOIN user_friendship f ON u.id = f.friend_id
         WHERE f.user_id = ?
     """;
-    private final static String FIND_COMMON_FRIENDS_QUERY = """
+    private static final String FIND_COMMON_FRIENDS_QUERY = """
         JOIN user_friendship f ON u.id = f.friend_id
         WHERE f.friend_id in (?, ?)
     """;

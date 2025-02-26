@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public class GenreRepository extends BaseRepository<Genre> {
 
-    private final static String FIND_ALL_QUERY = """
+    private static final String FIND_ALL_QUERY = """
             SELECT g.* from genre g
     """;
 

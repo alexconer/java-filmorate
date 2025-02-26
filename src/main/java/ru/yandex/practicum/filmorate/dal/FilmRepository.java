@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public class FilmRepository extends BaseRepository<Film> {
 
-    private final static String FIND_ALL_QUERY = """
+    private static final String FIND_ALL_QUERY = """
             SELECT f.*, mr.NAME AS mpa_name, mr.DESCRIPTION AS mpa_description,
             listagg(g.id, ',') WITHIN GROUP (ORDER BY g.ID) AS genre_ids,
             listagg(g.name, ',') WITHIN GROUP (ORDER BY g.ID) AS genre_names
@@ -23,26 +23,26 @@ public class FilmRepository extends BaseRepository<Film> {
             LEFT JOIN GENRE g ON g.ID = fg.GENRE_ID
             LEFT JOIN FILM_LIKE fl ON fl.FILM_ID = f.ID
     """;
-    private final static String GROUP_BY_QUERY = " GROUP BY f.id";
-    private final static String INSERT_FILM_QUERY = """
+    private static final String GROUP_BY_QUERY = " GROUP BY f.id";
+    private static final String INSERT_FILM_QUERY = """
         INSERT INTO film (name, description, release_date, duration, mpa_rating, last_update) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
     """;
-    private final static String MERGE_FILM_QUERY = """
+    private static final String MERGE_FILM_QUERY = """
         MERGE INTO film (id, name, description, release_date, duration, mpa_rating, last_update) KEY(id) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
     """;
-    private final static String INSERT_GENRE_QUERY = """
+    private static final String INSERT_GENRE_QUERY = """
         INSERT INTO film_genre (film_id, genre_id, last_update) VALUES (?, ?, CURRENT_TIMESTAMP)
     """;
-    private final static String DELETE_GENRES_QUERY = """
+    private static final String DELETE_GENRES_QUERY = """
         DELETE FROM film_genre WHERE film_id = ?
     """;
-    private final static String ADD_LIKE_QUERY = """
+    private static final String ADD_LIKE_QUERY = """
         MERGE INTO film_like (film_id, user_id, last_update) KEY(film_id, user_id) VALUES (?, ?, CURRENT_TIMESTAMP)
     """;
-    private final static String DELETE_LIKE_QUERY = """
+    private static final String DELETE_LIKE_QUERY = """
         DELETE FROM film_like WHERE film_id = ? AND user_id = ?
     """;
-    private final static String FIND_POPULAR_QUERY = """
+    private static final String FIND_POPULAR_QUERY = """
         ORDER BY COUNT(fl.user_id) DESC limit ?
     """;
 
