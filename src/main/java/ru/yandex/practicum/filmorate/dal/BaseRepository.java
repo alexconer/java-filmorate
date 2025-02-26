@@ -30,15 +30,19 @@ public class BaseRepository<T> {
         return jdbc.query(sql, mapper, args);
     }
 
-    protected boolean delete(String sql, Long id) {
-        return jdbc.update(sql, id) > 0;
+    protected boolean delete(String sql, Object... args) {
+        return jdbc.update(sql, args) > 0;
     }
 
-    protected void update(String sql, Object... args) {
+    protected void updateWithCheck(String sql, Object... args) {
         int result = jdbc.update(sql, args);
         if (result == 0) {
             throw new InternalServerException("Ошибка при обновлении");
         }
+    }
+
+    protected void update(String sql, Object... args) {
+        jdbc.update(sql, args);
     }
 
     protected Long insert(String sql, Object... args) {
