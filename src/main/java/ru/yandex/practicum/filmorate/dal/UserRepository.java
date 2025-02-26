@@ -34,7 +34,7 @@ public class UserRepository extends BaseRepository<User>  {
     """;
     private final static String FIND_FRIENDS_QUERY = """
         JOIN user_friendship f ON u.id = f.friend_id
-        WHERE u.id = ?
+        WHERE f.user_id = ?
     """;
     private final static String FIND_COMMON_FRIENDS_QUERY = """
         JOIN user_friendship f ON u.id = f.friend_id
@@ -85,7 +85,6 @@ public class UserRepository extends BaseRepository<User>  {
 
     public void removeFriend(Long userId, Long friendId) {
         delete(DELETE_FRIENDS_QUERY, userId, friendId);
-        delete(DELETE_FRIENDS_QUERY, friendId, userId);
     }
 
     public Collection<User> getFriends(Long userId) {
