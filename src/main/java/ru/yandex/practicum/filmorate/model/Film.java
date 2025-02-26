@@ -25,7 +25,7 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Длительность фильма должна быть положительным числом")
     private Integer duration;
-    private Mpa mpaRating;
+    private Mpa mpa;
     private Set<Genre> genres;
     private Instant lastUpdate;
 }

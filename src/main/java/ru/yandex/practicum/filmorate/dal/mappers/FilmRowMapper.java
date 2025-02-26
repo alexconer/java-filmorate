@@ -29,7 +29,7 @@ public class FilmRowMapper implements RowMapper<Film> {
             mpa.setId(rs.getLong("mpa_rating"));
             mpa.setName(rs.getString("mpa_name"));
             mpa.setDescription(rs.getString("mpa_description"));
-            film.setMpaRating(mpa);
+            film.setMpa(mpa);
         }
 
         if (rs.getString("genre_ids") != null) {

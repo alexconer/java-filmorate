@@ -38,5 +38,5 @@ public interface FilmStorage {
     /**
      * Возвращает все лайки по фильму
      */
-    public Set<Long> getLikes(long id);
+    public Collection<Film> getPopular(int limit);
 }

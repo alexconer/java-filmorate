@@ -1,14 +1,15 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dal.FilmRepository;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
-import java.util.Set;
 
 @Component("FilmDBStorage")
+@Primary
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
 
@@ -36,16 +37,18 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void addLike(long id, long userId) {
-
+        filmRepository.addLike(id, userId);
     }
 
     @Override
     public void removeLike(long id, long userId) {
-
+        filmRepository.removeLike(id, userId);
     }
 
     @Override
-    public Set<Long> getLikes(long id) {
-        return Set.of();
+    public Collection<Film> getPopular(int limit) {
+        return filmRepository.getPopular(limit);
     }
+
+
 }

@@ -49,7 +49,19 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Set<Long> getLikes(long id) {
+    public Collection<Film> getPopular(int limit) {
+        final Comparator<Film> comparatorByLike = (f1, f2) -> {
+            return getLikes(f1.getId()).size() - getLikes(f2.getId()).size();
+        };
+
+        return getAll().stream()
+                .filter(film -> getLikes(film.getId()).size() > 0)
+                .sorted(comparatorByLike.reversed())
+                .limit(limit)
+                .toList();
+    }
+
+    private Set<Long> getLikes(long id) {
         return likes.getOrDefault(id, Collections.emptySet());
     }
 }
