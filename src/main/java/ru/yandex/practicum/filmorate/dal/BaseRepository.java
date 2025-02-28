@@ -2,14 +2,17 @@ package ru.yandex.practicum.filmorate.dal;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import ru.yandex.practicum.filmorate.exception.InternalServerException;
 
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -43,6 +46,22 @@ public class BaseRepository<T> {
 
     protected void update(String sql, Object... args) {
         jdbc.update(sql, args);
+    }
+
+    protected <V> void batchUpdate(String sql, List<List<V>> argsList) {
+        jdbc.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                for (int j = 0; j < argsList.get(i).size(); j++) {
+                    ps.setObject(j + 1, argsList.get(i).get(j));
+                }
+            }
+
+            @Override
+            public int getBatchSize() {
+                return argsList.size();
+            }
+        });
     }
 
     protected Long insert(String sql, Object... args) {

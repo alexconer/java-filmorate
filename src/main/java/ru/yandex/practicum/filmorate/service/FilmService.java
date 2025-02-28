@@ -15,6 +15,8 @@ import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -44,9 +46,18 @@ public class FilmService {
         }
 
         if (film.getGenres() != null) {
-            for (Genre genre : film.getGenres()) {
-                if (genreStorage.get(genre.getId()) == null) {
-                    throw new NotFoundException("Жанр " + genre.getId() + " не найден");
+            Collection<Genre> allGenres = genreStorage.getAll();
+            Set<Long> allGenreIds = allGenres.stream()
+                    .map(Genre::getId)
+                    .collect(Collectors.toSet());
+
+            Set<Long> genreIds = film.getGenres().stream()
+                    .map(Genre::getId)
+                    .collect(Collectors.toSet());
+
+            for (Long genreId : genreIds) {
+                if (!allGenreIds.contains(genreId)) {
+                    throw new NotFoundException("Жанр id = " + genreId + " не найден");
                 }
             }
         }

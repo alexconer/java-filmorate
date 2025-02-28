@@ -8,7 +8,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.sql.Timestamp;
 import java.time.ZoneOffset;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class FilmRepository extends BaseRepository<Film> {
@@ -68,8 +70,10 @@ public class FilmRepository extends BaseRepository<Film> {
                 film.getMpa() == null ? null : film.getMpa().getId());
 
         if (film.getGenres() != null) {
-            delete(DELETE_GENRES_QUERY, id);
-            film.getGenres().forEach(genre -> update(INSERT_GENRE_QUERY, id, genre.getId()));
+            List<List<Long>> genresValues = film.getGenres().stream()
+                    .map(genre -> List.of(id, genre.getId()))
+                    .collect(Collectors.toList());
+            batchUpdate(INSERT_GENRE_QUERY, genresValues);
         }
 
         film.setId(id);
@@ -88,7 +92,10 @@ public class FilmRepository extends BaseRepository<Film> {
 
         if (film.getGenres() != null) {
             delete(DELETE_GENRES_QUERY, id);
-            film.getGenres().forEach(genre -> update(INSERT_GENRE_QUERY, id, genre.getId()));
+            List<List<Long>> genresValues = film.getGenres().stream()
+                    .map(genre -> List.of(id, genre.getId()))
+                    .collect(Collectors.toList());
+            batchUpdate(INSERT_GENRE_QUERY, genresValues);
         }
 
         film.setId(id);
