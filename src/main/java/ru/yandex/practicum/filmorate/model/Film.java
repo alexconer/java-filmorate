@@ -5,11 +5,15 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validator.MinimumDate;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class Film {
     private Long id;
@@ -21,4 +25,7 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Длительность фильма должна быть положительным числом")
     private Integer duration;
+    private Mpa mpa;
+    private Set<Genre> genres;
+    private Instant lastUpdate;
 }
